@@ -49,7 +49,7 @@ function makeChipTexture(label, bg, darkText) {
 
 function SkillChip({ skill, position }) {
   const group = useRef()
-  const anim = useRef({ animating: false, start: 0, fromRot: 0, toRot: 0, duration: 0.85 })
+  const anim = useRef({ animating: false, start: 0, fromRot: Math.PI / 2, toRot: Math.PI / 2, duration: 0.85 })
   const [hovered, setHovered] = useState(false)
 
   const topTex = useMemo(() => makeChipTexture(skill.name, skill.color, !!skill.dark), [skill])
@@ -87,6 +87,7 @@ function SkillChip({ skill, position }) {
     <group
       ref={group}
       position={position}
+      rotation={[Math.PI / 2, 0, 0]}
       onClick={handleClick}
       onPointerOver={() => {
         setHovered(true)

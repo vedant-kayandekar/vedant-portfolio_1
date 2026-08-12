@@ -29,9 +29,9 @@ export default function Nav() {
   const isDark = active === 'home' || active === 'projects'
 
   return (
-    <nav className="fixed left-1/2 top-5 z-50 -translate-x-1/2">
+    <nav className="fixed left-1/2 top-5 z-50 w-[95vw] max-w-max -translate-x-1/2">
       <ul
-        className="flex items-center gap-1 rounded-full border px-1.5 py-1.5 backdrop-blur-md transition-colors"
+        className="flex flex-wrap items-center justify-center gap-1 rounded-[2rem] border px-1.5 py-1.5 backdrop-blur-md transition-colors md:rounded-full"
         style={{
           borderColor: isDark ? 'rgba(255,255,255,0.15)' : 'rgba(0,0,0,0.1)',
           background: isDark ? 'rgba(10,13,18,0.55)' : 'rgba(255,255,255,0.55)',
@@ -41,7 +41,7 @@ export default function Nav() {
           <li key={l.id}>
             <a
               href={`#${l.id}`}
-              className="font-display block rounded-full px-3.5 py-1.5 text-xs font-medium transition-colors md:px-4"
+              className="font-display block rounded-full px-3 py-1.5 text-[11px] font-medium transition-colors sm:px-3.5 sm:text-xs md:px-4"
               style={{
                 color:
                   active === l.id

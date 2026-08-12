@@ -28,42 +28,14 @@ function SocialIcon({ icon }) {
   )
 }
 
-// Original flat-illustration "peeking over the laptop" figure — simple
-// geometric shapes, not traced from any reference image.
-function PeekingIllustration() {
+// Placeholder for 3D Model
+function ModelPlaceholder() {
   return (
-    <svg viewBox="0 0 320 320" className="h-auto w-[62%] max-w-[320px] drop-shadow-2xl md:w-[70%]">
-      {/* laptop */}
-      <rect x="60" y="210" width="200" height="14" rx="4" fill="var(--splithero-dark)" />
-      <path d="M90 130 h140 a8 8 0 0 1 8 8 v72 h-156 v-72 a8 8 0 0 1 8 -8 z" fill="#1c1c1c" />
-      <rect x="98" y="140" width="124" height="78" rx="2" fill="#0d0d0d" />
-      <rect x="108" y="150" width="60" height="6" rx="3" fill="var(--splithero-orange)" opacity="0.85" />
-      <rect x="108" y="163" width="90" height="5" rx="2.5" fill="#3a3a3a" />
-      <rect x="108" y="174" width="80" height="5" rx="2.5" fill="#3a3a3a" />
-      <rect x="108" y="185" width="95" height="5" rx="2.5" fill="#3a3a3a" />
-
-      {/* shoulders / body behind laptop */}
-      <path d="M70 210 q90 -46 180 0 v14 h-180 z" fill="var(--splithero-dark)" />
-
-      {/* head */}
-      <circle cx="160" cy="122" r="46" fill="#f0c49a" />
-      {/* hair */}
-      <path
-        d="M112 118 q-4 -58 48 -58 q52 0 48 58 q-10 -26 -48 -26 q-38 0 -48 26 z"
-        fill="var(--splithero-dark)"
-      />
-      <path d="M116 108 q4 -14 14 -18" stroke="var(--splithero-dark)" strokeWidth="6" strokeLinecap="round" fill="none" />
-      <path d="M204 108 q-4 -14 -14 -18" stroke="var(--splithero-dark)" strokeWidth="6" strokeLinecap="round" fill="none" />
-
-      {/* face features */}
-      <circle cx="140" cy="126" r="4.5" fill="var(--splithero-dark)" />
-      <circle cx="180" cy="126" r="4.5" fill="var(--splithero-dark)" />
-      <path d="M144 146 q16 10 32 0" stroke="var(--splithero-dark)" strokeWidth="3.5" strokeLinecap="round" fill="none" />
-
-      {/* eyebrows */}
-      <path d="M130 112 q10 -6 20 -2" stroke="var(--splithero-dark)" strokeWidth="3" strokeLinecap="round" fill="none" />
-      <path d="M190 112 q-10 -6 -20 -2" stroke="var(--splithero-dark)" strokeWidth="3" strokeLinecap="round" fill="none" />
-    </svg>
+    <div className="flex aspect-square w-[60%] max-w-[320px] flex-col items-center justify-center rounded-2xl border-2 border-dashed border-[var(--splithero-dark)]/30 p-6 text-center text-[var(--splithero-dark)]/60">
+      <svg className="mb-3 h-10 w-10 opacity-50" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M14 10l-2 1m0 0l-2-1m2 1v2.5M20 7l-2 1m2-1l-2-1m2 1v2.5M14 4l-2-1-2 1M4 7l2-1M4 7l2 1M4 7v2.5M12 21l-2-1m2 1l2-1m-2 1v-2.5M6 18l-2-1v-2.5M18 18l2-1v-2.5" /></svg>
+      <span className="font-display font-medium">3D Model Ready</span>
+      <span className="mt-1 text-xs">Waiting for .glb file</span>
+    </div>
   )
 }
 
@@ -164,7 +136,7 @@ export default function Hero() {
           transition={{ duration: 0.8, delay: 0.2 }}
           className="flex items-center justify-center"
         >
-          <PeekingIllustration />
+          <ModelPlaceholder />
         </motion.div>
 
         <span className="absolute bottom-6 right-6 font-mono text-xs text-[var(--splithero-dark)]/60 md:bottom-10 md:right-10">

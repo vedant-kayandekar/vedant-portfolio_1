@@ -1,4 +1,7 @@
 import { motion } from 'framer-motion'
+import { Canvas, useFrame } from '@react-three/fiber'
+import { useGLTF, Environment } from '@react-three/drei'
+import { Suspense, useRef } from 'react'
 
 const socials = [
   { label: 'Email', href: 'mailto:vedantassociates2004@gmail.com', icon: 'mail' },
@@ -25,19 +28,29 @@ function SocialIcon({ icon }) {
     <svg {...common}>
       <path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72c.13.96.36 1.9.68 2.81a2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45c.9.32 1.85.55 2.81.68A2 2 0 0 1 22 16.92z" />
     </svg>
-  )
-}
+function AvatarModel() {
+  const { scene } = useGLTF('/model.glb')
+  const group = useRef()
+  
+  useFrame((state) => {
+    // Smoothly rotate the model based on mouse position
+    const targetX = (state.mouse.x * Math.PI) / 6
+    const targetY = (state.mouse.y * Math.PI) / 8
+    
+    // Lerp rotation for smooth eye-tracking effect
+    if (group.current) {
+      group.current.rotation.y += (targetX - group.current.rotation.y) * 0.1
+      group.current.rotation.x += (-targetY - group.current.rotation.x) * 0.1
+    }
+  })
 
-// Placeholder for 3D Model
-function ModelPlaceholder() {
   return (
-    <div className="flex aspect-square w-[60%] max-w-[320px] flex-col items-center justify-center rounded-2xl border-2 border-dashed border-[var(--splithero-dark)]/30 p-6 text-center text-[var(--splithero-dark)]/60">
-      <svg className="mb-3 h-10 w-10 opacity-50" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M14 10l-2 1m0 0l-2-1m2 1v2.5M20 7l-2 1m2-1l-2-1m2 1v2.5M14 4l-2-1-2 1M4 7l2-1M4 7l2 1M4 7v2.5M12 21l-2-1m2 1l2-1m-2 1v-2.5M6 18l-2-1v-2.5M18 18l2-1v-2.5" /></svg>
-      <span className="font-display font-medium">3D Model Ready</span>
-      <span className="mt-1 text-xs">Waiting for .glb file</span>
-    </div>
+    <group ref={group}>
+      <primitive object={scene} scale={1.2} position={[0, -1.2, 0]} />
+    </group>
   )
 }
+useGLTF.preload('/model.glb')
 
 const roles = ['Software Engineer', 'Full-Stack Developer', 'Coach & Creator']
 
@@ -134,9 +147,17 @@ export default function Hero() {
           initial={{ opacity: 0, y: 24 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.8, delay: 0.2 }}
-          className="flex items-center justify-center"
+          className="flex h-[400px] w-full max-w-[500px] items-center justify-center md:h-[550px]"
         >
-          <ModelPlaceholder />
+          <Canvas camera={{ position: [0, 0, 5], fov: 45 }}>
+            <Suspense fallback={null}>
+              <ambientLight intensity={0.5} />
+              <directionalLight position={[10, 10, 5]} intensity={1.5} />
+              <directionalLight position={[-10, -10, -5]} intensity={0.5} />
+              <Environment preset="city" />
+              <AvatarModel />
+            </Suspense>
+          </Canvas>
         </motion.div>
 
         <span className="absolute bottom-6 right-6 font-mono text-xs text-[var(--splithero-dark)]/60 md:bottom-10 md:right-10">

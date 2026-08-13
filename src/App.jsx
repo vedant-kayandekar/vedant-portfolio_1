@@ -6,10 +6,20 @@ import Projects from './components/Projects'
 // import Testimonials from './components/Testimonials'
 import Contact from './components/Contact'
 
+// The visible sections of the page
+const activeSections = [
+  { id: 'home', label: 'Home' },
+  { id: 'experience', label: 'Experience' },
+  { id: 'skills', label: 'Skills' },
+  { id: 'projects', label: 'Projects' },
+  // { id: 'testimonials', label: 'Testimonials' }, // Uncomment when restoring testimonials
+  { id: 'contact', label: 'Contact' },
+]
+
 export default function App() {
   return (
     <>
-      <Nav />
+      <Nav links={activeSections} />
       <main>
         <Hero />
         <Experience />

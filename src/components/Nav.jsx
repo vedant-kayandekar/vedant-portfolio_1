@@ -1,16 +1,7 @@
 import { useEffect, useState } from 'react'
 
-const links = [
-  { id: 'home', label: 'Home' },
-  { id: 'experience', label: 'Experience' },
-  { id: 'skills', label: 'Skills' },
-  { id: 'projects', label: 'Projects' },
-  { id: 'testimonials', label: 'Testimonials' },
-  { id: 'contact', label: 'Contact' },
-]
-
-export default function Nav() {
-  const [active, setActive] = useState('home')
+export default function Nav({ links = [] }) {
+  const [active, setActive] = useState(links[0]?.id || 'home')
 
   useEffect(() => {
     const sections = links.map((l) => document.getElementById(l.id)).filter(Boolean)
@@ -20,11 +11,12 @@ export default function Nav() {
           if (entry.isIntersecting) setActive(entry.target.id)
         })
       },
-      { threshold: 0.5 }
+      // rootMargin fires when the section crosses the middle of the screen
+      { rootMargin: '-50% 0px -50% 0px' }
     )
     sections.forEach((s) => observer.observe(s))
     return () => observer.disconnect()
-  }, [])
+  }, [links])
 
   const isDark = active === 'home' || active === 'projects'
 

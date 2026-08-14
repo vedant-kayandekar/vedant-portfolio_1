@@ -1,7 +1,7 @@
 import { motion } from 'framer-motion'
 import { Canvas, useFrame } from '@react-three/fiber'
 import { useGLTF, Environment, OrbitControls, useAnimations, Bounds, Html } from '@react-three/drei'
-import { Suspense, useRef, useEffect, useMemo } from 'react'
+import { Suspense, useRef, useEffect, useMemo, useState } from 'react'
 import * as THREE from 'three'
 
 const socials = [
@@ -102,6 +102,26 @@ function DualAvatarModel() {
     }
   }, [actions])
 
+  // Fix common 3D model rendering issues (invisible hair, glasses, clipping)
+  useMemo(() => {
+    idleModel.scene.traverse((child) => {
+      if (child.isMesh) {
+        // Prevent pieces of the model from popping out of existence when moving
+        child.frustumCulled = false
+        
+        if (child.material) {
+          // Fix transparent materials like Hair and Glasses so they render correctly
+          if (child.material.transparent || child.material.alphaMap || child.name.toLowerCase().includes('hair')) {
+            child.material.transparent = true
+            child.material.depthWrite = true
+            child.material.alphaTest = 0.5
+            child.material.side = THREE.DoubleSide
+          }
+        }
+      }
+    })
+  }, [idleModel.scene])
+
   // Find head bone dynamically for eye tracking
   const headBone = useMemo(() => {
     let bone = null
@@ -137,6 +157,15 @@ useGLTF.preload('/landing_model.glb')
 const roles = ['Software Engineer', 'Full-Stack Developer', 'Coach & Creator']
 
 export default function Hero() {
+  const [isMobile, setIsMobile] = useState(false)
+
+  useEffect(() => {
+    const checkMobile = () => setIsMobile(window.innerWidth < 768)
+    checkMobile()
+    window.addEventListener('resize', checkMobile)
+    return () => window.removeEventListener('resize', checkMobile)
+  }, [])
+
   return (
     <section id="home" className="relative flex h-screen w-full overflow-hidden">
       
@@ -163,8 +192,8 @@ export default function Hero() {
               <directionalLight position={[-10, -10, -5]} intensity={0.5} />
               <Environment preset="city" />
 
-              {/* Smaller margin = MASSIVELY BIGGER model! */}
-              <Bounds fit clip observe margin={0.8}>
+              {/* Smaller margin on mobile = massively bigger model. Normal margin (1.2) on desktop. */}
+              <Bounds fit clip observe margin={isMobile ? 0.6 : 1.2}>
                 <DualAvatarModel />
               </Bounds>
               
@@ -222,9 +251,7 @@ export default function Hero() {
             transition={{ duration: 0.7, delay: 0.24 }}
             className="mt-6 text-sm leading-relaxed text-white/60 md:max-w-md md:text-base"
           >
-            I build full-stack software — from a live enterprise ERP system to
-            ventures I've launched and shipped solo. Curious by nature,
-            engineering-minded, and currently deepening DSA and system design.
+            I engineer scalable full-stack software. From contributing to live production apps as an intern to delivering end-to-end freelance client ventures, I build systems that solve real problems. Currently deepening my DSA and system design, I'm actively seeking full-time engineering roles while continuing to build.
           </motion.p>
 
           <motion.div

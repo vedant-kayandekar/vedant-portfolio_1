@@ -1,5 +1,6 @@
-import { Suspense, useMemo, useRef, useState } from 'react'
+import { Suspense, useMemo, useRef, useState, useEffect } from 'react'
 import { Canvas, useFrame } from '@react-three/fiber'
+import { Bounds } from '@react-three/drei'
 import * as THREE from 'three'
 
 const skills = [
@@ -115,7 +116,7 @@ function SkillChip({ skill, position }) {
 }
 
 function Grid() {
-  const cols = 4
+  const cols = window.innerWidth < 768 ? 3 : 4
   const spacingX = 2.15
   const spacingY = 1.95
   const rows = Math.ceil(skills.length / cols)
@@ -136,6 +137,15 @@ function Grid() {
 }
 
 export default function Skills() {
+  const [cols, setCols] = useState(4)
+
+  useEffect(() => {
+    const handleResize = () => setCols(window.innerWidth < 768 ? 3 : 4)
+    handleResize()
+    window.addEventListener('resize', handleResize)
+    return () => window.removeEventListener('resize', handleResize)
+  }, [])
+
   return (
     <section id="skills" className="relative bg-[var(--skills-bg)] px-6 py-24 text-[var(--skills-ink)] md:px-12 md:py-32">
       <div className="mx-auto max-w-6xl">
@@ -158,7 +168,9 @@ export default function Skills() {
               <ambientLight intensity={0.75} />
               <directionalLight position={[4, 6, 6]} intensity={1.1} castShadow />
               <directionalLight position={[-4, -2, 4]} intensity={0.35} />
-              <Grid />
+              <Bounds fit clip observe margin={1.2}>
+                <Grid key={cols} />
+              </Bounds>
             </Suspense>
           </Canvas>
         </div>

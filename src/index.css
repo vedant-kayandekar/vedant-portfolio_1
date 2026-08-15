@@ -1,4 +1,4 @@
-@import url('https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Inter:wght@400;500;600&family=Archivo+Black&family=JetBrains+Mono:wght@400;500;700&family=Fraunces:ital,opsz,wght@0,9..144,400;0,9..144,500;0,9..144,600;1,9..144,400&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Inter:wght@400;500;600&family=Archivo+Black&family=JetBrains+Mono:wght@400;500;700&family=Fraunces:ital,opsz,wght@0,9..144,400;0,9..144,500;0,9..144,600;1,9..144,400&family=Press+Start+2P&display=swap');
 @import "tailwindcss";
 
 :root{
@@ -32,6 +32,20 @@
 
   --skills-bg: #f5f3ef;
   --skills-ink: #16130f;
+
+  /* MINECRAFT / GAMIFIED YELLOW-ORANGE PIXEL THEME */
+  --gallery-bg: #3d2314;      /* Dirt brown */
+  --gallery-bg2: #211108;     /* Deep shadow brown */
+  --gallery-ink: #fce7ba;     /* Cream/gold text */
+  --gallery-accent: #ffaa00;  /* Minecraft Gold */
+  --gallery-accent2: #ff6600; /* Vibrant Orange */
+  --gallery-grid: rgba(255, 170, 0, 0.15); /* Gold pixel grid */
+
+  /* STORY THEME */
+  --story-bg: #0a0806;
+  --story-ink: #f2ece0;
+  --story-amber: #e8a94b;
+  --story-dim: rgba(242,236,224,0.45);
 }
 
 *{ box-sizing: border-box; }
@@ -54,6 +68,7 @@ body{
 .font-mono{ font-family: 'JetBrains Mono', monospace; }
 .font-impact{ font-family: 'Archivo Black', sans-serif; }
 .font-serif-vintage{ font-family: 'Fraunces', serif; }
+.font-pixel{ font-family: 'Press Start 2P', monospace; }
 
 a{ color: inherit; }
 

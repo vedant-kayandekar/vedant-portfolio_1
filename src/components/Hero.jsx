@@ -190,7 +190,7 @@ export default function Hero() {
               <ambientLight intensity={0.5} />
               <directionalLight position={[10, 10, 5]} intensity={1.5} />
               <directionalLight position={[-10, -10, -5]} intensity={0.5} />
-              <Environment preset="city" />
+              <Environment files="/potsdamer_platz_1k.hdr" />
 
               {/* Smaller margin on mobile = massively bigger model. Normal margin (1.2) on desktop. */}
               <Bounds fit clip observe margin={isMobile ? 0.6 : 1.2}>

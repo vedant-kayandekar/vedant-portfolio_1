@@ -12,31 +12,30 @@ const projects = [
     big: true,
   },
   {
-    tag: 'HACKATHON · 2ND PLACE',
-    title: 'FinLens — Fake Transaction Fraud Detection',
-    desc: 'Fraud-detection platform built solo-led with a 3-person team — trained and benchmarked 4 ML models in parallel, cut perceived load time from minutes to near-instant by streaming the strongest result first.',
-    stack: ['Python', 'FastAPI', 'React', 'Supabase'],
-    github: 'https://github.com/vedant-kayandekar/fraud-detection-backend',
-    big: true,
-  },
-  {
     tag: 'VENTURE · LIVE',
     title: 'PlayOnGear & AnyCoaches',
     desc: 'Self-developed platforms and digital ventures built from the ground up to solve real-world problems. Includes playongear.com & anycoaches.playongear.com.',
     stack: ['React', 'Full-Stack'],
     link: 'https://anycoaches.playongear.com',
     images: [
-      'https://image.thum.io/get/width/800/crop/800/https://anycoaches.playongear.com',
-      'https://image.thum.io/get/width/800/crop/800/https://playongear.com'
+      'https://image.thum.io/get/width/800/crop/800/https://anycoaches.playongear.com'
     ],
   },
   {
-    tag: 'CLIENT WORK · PENDING HANDOVER',
-    title: 'Villa Room Booking System - Full Booking System',
-    desc: 'Freelance builds for small businesses — WordPress/WooCommerce and custom stacks.',
-    stack: ['WordPress', 'React'],
+    tag: 'FREELANCE WORK',
+    title: 'Client Full Room Booking System (Villa)',
+    desc: 'Freelance build for a local business — full end-to-end WordPress and WooCommerce stack for managing villa bookings.',
+    stack: ['WordPress', 'WooCommerce'],
     link: 'http://papayawhip-quail-969155.hostingersite.com',
     images: ['https://image.thum.io/get/width/800/crop/800/http://papayawhip-quail-969155.hostingersite.com'],
+  },
+  {
+    tag: 'HACKATHON · 2ND PLACE',
+    title: 'FinLens — Fake Transaction Fraud Detection',
+    desc: 'Fraud-detection platform built solo-led with a 3-person team — trained and benchmarked 4 ML models in parallel, cut perceived load time from minutes to near-instant by streaming the strongest result first.',
+    stack: ['Python', 'FastAPI', 'React', 'Supabase'],
+    github: 'https://github.com/vedant-kayandekar/fraud-detection-backend',
+    big: true,
   },
   {
     tag: 'PROJECT',
@@ -54,7 +53,7 @@ const projects = [
   },
 ]
 
-function ProjectThumbnail({ images }) {
+function ProjectThumbnail({ images, link }) {
   const [idx, setIdx] = useState(0)
   
   useEffect(() => {
@@ -67,18 +66,26 @@ function ProjectThumbnail({ images }) {
 
   if (!images || images.length === 0) return null;
 
+  const content = images.map((img, i) => (
+    <img
+      key={i}
+      src={img}
+      alt="Project Screenshot"
+      className={`absolute inset-0 h-full w-full object-cover transition-opacity duration-1000 ${
+        i === idx ? 'opacity-100' : 'opacity-0'
+      }`}
+    />
+  ));
+
   return (
-    <div className="relative mt-5 h-48 w-full overflow-hidden border-2 border-[var(--proj-ink)] bg-gray-100 md:h-64 lg:h-80">
-      {images.map((img, i) => (
-        <img
-          key={i}
-          src={img}
-          alt="Project Screenshot"
-          className={`absolute inset-0 h-full w-full object-cover transition-opacity duration-1000 ${
-            i === idx ? 'opacity-100' : 'opacity-0'
-          }`}
-        />
-      ))}
+    <div className="relative mt-5 h-48 w-full overflow-hidden border-2 border-[var(--proj-ink)] bg-gray-100 md:h-64 lg:h-80 transition hover:-translate-y-1">
+      {link ? (
+        <a href={link} target="_blank" rel="noreferrer" className="block h-full w-full cursor-pointer">
+          {content}
+        </a>
+      ) : (
+        content
+      )}
     </div>
   )
 }
@@ -138,7 +145,7 @@ export default function Projects() {
               <h3 className="font-impact mt-5 text-3xl leading-[0.95] md:text-4xl">{p.title}</h3>
               <p className="mt-4 max-w-2xl text-sm leading-relaxed text-black/75 md:text-base">{p.desc}</p>
               
-              <ProjectThumbnail images={p.images} />
+              <ProjectThumbnail images={p.images} link={p.link || p.github} />
 
               <div className="mt-6 flex flex-wrap gap-2">
                 {p.stack.map((s) => (

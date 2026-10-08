@@ -18,6 +18,10 @@ const rungs = [
     step: 'Rung 02',
     title: 'Self-Developed Ventures',
     org: 'PlayOnGear & AnyCoaches',
+    links: [
+      { name: 'AnyCoaches', url: 'https://anycoaches.playongear.com' },
+      { name: 'PlayOnGear', url: 'https://playongear.com' }
+    ],
     period: '2025 – Present',
     color: 'var(--exp-teal)',
     align: 'right',
@@ -94,7 +98,22 @@ export default function Experience() {
                   <h3 className="font-display mt-4 text-2xl font-semibold text-[var(--exp-ink)] md:text-3xl">
                     {r.title}
                   </h3>
-                  <p className="mt-1 text-sm font-medium text-black/70">{r.org}</p>
+                  <div className="mt-1 flex flex-wrap items-center gap-2">
+                    <p className="text-sm font-medium text-black/70">{r.org}</p>
+                    {r.links && (
+                      <div className="flex gap-1.5">
+                        {r.links.map((link, idx) => (
+                          <a key={idx} href={link.url} target="_blank" rel="noreferrer" title={`Visit ${link.name}`} className="inline-block rounded bg-black/5 p-1 transition-colors hover:bg-black/10">
+                            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                              <path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path>
+                              <polyline points="15 3 21 3 21 9"></polyline>
+                              <line x1="10" y1="14" x2="21" y2="3"></line>
+                            </svg>
+                          </a>
+                        ))}
+                      </div>
+                    )}
+                  </div>
                   <ul className="mt-5 space-y-2.5">
                     {r.points.map((p) => (
                       <li key={p} className="flex gap-2.5 text-sm leading-relaxed text-black/80">

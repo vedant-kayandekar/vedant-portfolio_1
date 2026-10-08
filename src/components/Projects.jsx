@@ -1,3 +1,5 @@
+import { useState, useEffect } from 'react'
+
 const projects = [
   {
     tag: 'HACKATHON · 2ND PLACE',
@@ -6,6 +8,7 @@ const projects = [
     stack: ['Node.js', 'React', 'pgvector', 'Python CV'],
     github: '#',
     link: 'http://yogakickfit.playongear.com',
+    images: ['https://image.thum.io/get/width/800/crop/800/http://yogakickfit.playongear.com'],
     big: true,
   },
   {
@@ -21,14 +24,19 @@ const projects = [
     title: 'PlayOnGear & AnyCoaches',
     desc: 'Self-developed platforms and digital ventures built from the ground up to solve real-world problems. Includes playongear.com & anycoaches.playongear.com.',
     stack: ['React', 'Full-Stack'],
-    link: 'https://playongear.com',
+    link: 'https://anycoaches.playongear.com',
+    images: [
+      'https://image.thum.io/get/width/800/crop/800/https://anycoaches.playongear.com',
+      'https://image.thum.io/get/width/800/crop/800/https://playongear.com'
+    ],
   },
   {
     tag: 'CLIENT WORK · PENDING HANDOVER',
-    title: 'Client Websites',
+    title: 'Villa Room Booking System - Full Booking System',
     desc: 'Freelance builds for small businesses — WordPress/WooCommerce and custom stacks.',
     stack: ['WordPress', 'React'],
     link: 'http://papayawhip-quail-969155.hostingersite.com',
+    images: ['https://image.thum.io/get/width/800/crop/800/http://papayawhip-quail-969155.hostingersite.com'],
   },
   {
     tag: 'PROJECT',
@@ -45,6 +53,35 @@ const projects = [
     github: 'https://github.com/vedant-kayandekar/Inventory-Management-Python-Django',
   },
 ]
+
+function ProjectThumbnail({ images }) {
+  const [idx, setIdx] = useState(0)
+  
+  useEffect(() => {
+    if (!images || images.length <= 1) return;
+    const timer = setInterval(() => {
+      setIdx((prev) => (prev + 1) % images.length)
+    }, 3000)
+    return () => clearInterval(timer)
+  }, [images])
+
+  if (!images || images.length === 0) return null;
+
+  return (
+    <div className="relative mt-5 h-48 w-full overflow-hidden border-2 border-[var(--proj-ink)] bg-gray-100 md:h-64 lg:h-80">
+      {images.map((img, i) => (
+        <img
+          key={i}
+          src={img}
+          alt="Project Screenshot"
+          className={`absolute inset-0 h-full w-full object-cover transition-opacity duration-1000 ${
+            i === idx ? 'opacity-100' : 'opacity-0'
+          }`}
+        />
+      ))}
+    </div>
+  )
+}
 
 export default function Projects() {
   return (
@@ -100,6 +137,9 @@ export default function Projects() {
               </div>
               <h3 className="font-impact mt-5 text-3xl leading-[0.95] md:text-4xl">{p.title}</h3>
               <p className="mt-4 max-w-2xl text-sm leading-relaxed text-black/75 md:text-base">{p.desc}</p>
+              
+              <ProjectThumbnail images={p.images} />
+
               <div className="mt-6 flex flex-wrap gap-2">
                 {p.stack.map((s) => (
                   <span

@@ -1,8 +1,11 @@
-import { motion } from 'framer-motion'
-import { Canvas, useFrame } from '@react-three/fiber'
-import { useGLTF, Environment, OrbitControls, useAnimations, Bounds, Html } from '@react-three/drei'
+import { motion, AnimatePresence } from 'framer-motion'
+import { Canvas, useFrame, useThree } from '@react-three/fiber'
+import { useGLTF, Environment, OrbitControls, useAnimations, Bounds, useEnvironment } from '@react-three/drei'
 import { Suspense, useRef, useEffect, useMemo, useState } from 'react'
 import * as THREE from 'three'
+
+// Enable global Three.js memory caching
+THREE.Cache.enabled = true
 
 const socials = [
   { label: 'GitHub', href: '#', icon: 'github' },
@@ -53,22 +56,9 @@ function SocialIcon({ icon }) {
   return null
 }
 
-function Loader() {
-  return (
-    <Html center>
-      <div className="relative flex items-center justify-center">
-        <div className="absolute h-24 w-24 animate-ping rounded-full bg-[var(--splithero-orange)]/40 blur-xl"></div>
-        <div className="absolute h-16 w-16 animate-pulse rounded-full bg-[var(--splithero-orange)]/60 blur-md"></div>
-        <div className="z-10 whitespace-nowrap font-mono text-sm font-bold tracking-widest text-[#0a0d12]">
-          LOADING MAGIC...
-        </div>
-      </div>
-    </Html>
-  )
-}
-
-function DualAvatarModel() {
+function DualAvatarModel({ onReady }) {
   const group = useRef()
+  const { gl, scene, camera } = useThree()
   
   // Load both GLBs
   const idleModel = useGLTF('/animated_model.glb') 
@@ -81,26 +71,9 @@ function DualAvatarModel() {
     return [...idles, ...landings]
   }, [idleModel.animations, landingModel.animations])
 
-  const { actions } = useAnimations(combinedAnims, group)
-
-  useEffect(() => {
-    if (actions['Landing'] && actions['Idle']) {
-      // Play landing animation once
-      actions['Landing'].setLoop(THREE.LoopOnce, 1)
-      actions['Landing'].clampWhenFinished = true
-      actions['Landing'].play()
-      
-      const duration = actions['Landing'].getClip().duration
-      
-      // Wait for it to finish + 1 second, then crossfade
-      const timer = setTimeout(() => {
-        actions['Idle'].reset().play()
-        actions['Idle'].crossFadeFrom(actions['Landing'], 1, true)
-      }, (duration * 1000) + 1000)
-      
-      return () => clearTimeout(timer)
-    }
-  }, [actions])
+  const { actions, mixer } = useAnimations(combinedAnims, group)
+  const [landingComplete, setLandingComplete] = useState(false)
+  const hasTriggeredRef = useRef(false)
 
   // Fix common 3D model rendering issues (invisible hair, glasses, clipping)
   useMemo(() => {
@@ -133,7 +106,62 @@ function DualAvatarModel() {
     return bone
   }, [idleModel.scene])
 
+  useEffect(() => {
+    const landingAction = actions['Landing']
+    const idleAction = actions['Idle']
+    if (!landingAction || !idleAction || hasTriggeredRef.current) return
+    hasTriggeredRef.current = true
+
+    // 1. Stage the animation at Frame 0 in a PAUSED state
+    landingAction.reset()
+    landingAction.setLoop(THREE.LoopOnce, 1)
+    landingAction.clampWhenFinished = true
+    landingAction.time = 0
+    landingAction.paused = true
+    
+    // Evaluate mixer once at t=0 so bones snap to the sky position
+    mixer.setTime(0)
+
+    // 2. Force full GPU precompilation of shaders, textures, and environment
+    gl.compile(scene, camera)
+
+    // 3. Double requestAnimationFrame guarantees:
+    // Frame 1: WebGL state and shader linking settled
+    // Frame 2: GPU buffer presented to the compositor with zero stutter
+    let animTimer
+    const raf1 = requestAnimationFrame(() => {
+      const raf2 = requestAnimationFrame(() => {
+        // Signal parent that 3D canvas is 100% compiled & visible
+        if (onReady) onReady()
+
+        // 4. Start the landing animation cleanly from Frame 0
+        landingAction.reset()
+        landingAction.time = 0
+        landingAction.paused = false
+        landingAction.play()
+
+        const duration = landingAction.getClip().duration // 2.0s
+        
+        // Wait for landing to finish, then crossfade to Idle
+        animTimer = setTimeout(() => {
+          setLandingComplete(true)
+          idleAction.reset().play()
+          idleAction.crossFadeFrom(landingAction, 0.8, true)
+        }, (duration * 1000) + 500)
+      })
+      return () => cancelAnimationFrame(raf2)
+    })
+
+    return () => {
+      cancelAnimationFrame(raf1)
+      if (animTimer) clearTimeout(animTimer)
+    }
+  }, [actions, mixer, gl, scene, camera, onReady])
+
+  // Eye/head tracking via mouse coordinates (active once superhero impact lands)
   useFrame((state) => {
+    if (!landingComplete) return // Keep superhero landing head motion pure and undistorted
+
     const targetX = (state.mouse.x * Math.PI) / 2
     const targetY = (state.mouse.y * Math.PI) / 2.5
     
@@ -151,13 +179,16 @@ function DualAvatarModel() {
     </group>
   )
 }
+
 useGLTF.preload('/animated_model.glb')
 useGLTF.preload('/landing_model.glb')
+useEnvironment.preload({ files: '/potsdamer_platz_1k.hdr' })
 
 const roles = ['Software Engineer', 'Full-Stack Developer', 'Coach & Creator']
 
 export default function Hero() {
   const [isMobile, setIsMobile] = useState(false)
+  const [isModelReady, setIsModelReady] = useState(false)
 
   useEffect(() => {
     const checkMobile = () => setIsMobile(window.innerWidth < 768)
@@ -179,28 +210,44 @@ export default function Hero() {
       {/* 2. 3D MODEL LAYER (Middle Z) */}
       {/* On mobile: width 85% anchored right so it shifts right. Desktop: exact right half */}
       <div className="absolute inset-y-0 right-0 z-10 w-[85%] md:w-1/2">
-        <motion.div
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          transition={{ duration: 1.2, delay: 0.2 }}
-          className="h-full w-full"
-        >
+        <div className="relative h-full w-full">
           <Canvas camera={{ position: [0, 0, 5], fov: 45 }} className="h-full w-full">
-            <Suspense fallback={<Loader />}>
+            <Suspense fallback={null}>
               <ambientLight intensity={0.5} />
               <directionalLight position={[10, 10, 5]} intensity={1.5} />
               <directionalLight position={[-10, -10, -5]} intensity={0.5} />
               <Environment files="/potsdamer_platz_1k.hdr" />
 
-              {/* Smaller margin on mobile = massively bigger model. Normal margin (1.2) on desktop. */}
-              <Bounds fit clip observe margin={isMobile ? 0.6 : 1.2}>
-                <DualAvatarModel />
+              {/* Instant camera framing (maxDuration={0.01}) so the camera is already positioned before the drop */}
+              <Bounds fit clip margin={isMobile ? 0.6 : 1.2} maxDuration={0.01}>
+                <DualAvatarModel onReady={() => setIsModelReady(true)} />
               </Bounds>
               
               <OrbitControls makeDefault enableZoom={false} enablePan={false} />
             </Suspense>
           </Canvas>
-        </motion.div>
+
+          {/* Seamless overlay loader: Pulses while downloading & compiling, instantly dissolves when 3D drops */}
+          <AnimatePresence>
+            {!isModelReady && (
+              <motion.div
+                key="hero-loader"
+                initial={{ opacity: 1 }}
+                exit={{ opacity: 0 }}
+                transition={{ duration: 0.3 }}
+                className="pointer-events-none absolute inset-0 z-30 flex items-center justify-center"
+              >
+                <div className="relative flex items-center justify-center">
+                  <div className="absolute h-24 w-24 animate-ping rounded-full bg-[var(--splithero-orange)]/40 blur-xl"></div>
+                  <div className="absolute h-16 w-16 animate-pulse rounded-full bg-[var(--splithero-orange)]/60 blur-md"></div>
+                  <div className="z-10 whitespace-nowrap font-mono text-sm font-bold tracking-widest text-[#0a0d12]">
+                    LOADING MAGIC...
+                  </div>
+                </div>
+              </motion.div>
+            )}
+          </AnimatePresence>
+        </div>
 
         <span className="absolute bottom-6 right-6 z-20 font-mono text-xs text-[var(--splithero-dark)]/60 md:bottom-10 md:right-10">
           {new Date().getFullYear()}

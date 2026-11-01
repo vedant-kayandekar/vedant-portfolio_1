@@ -23,11 +23,11 @@ const projects = [
   },
   {
     tag: 'FREELANCE WORK',
-    title: 'Client Full Room Booking System (Villa)',
-    desc: 'Freelance build for a local business — full end-to-end WordPress and WooCommerce stack for managing villa bookings.',
+    title: 'Golden Orchard Stays',
+    desc: 'Freelance build for a luxury villa & stay — full end-to-end WordPress and WooCommerce stack for managing room bookings and reservations.',
     stack: ['WordPress', 'WooCommerce'],
-    link: 'http://papayawhip-quail-969155.hostingersite.com',
-    images: ['https://image.thum.io/get/width/800/crop/800/http://papayawhip-quail-969155.hostingersite.com'],
+    link: 'https://goldenorchardstays.com/',
+    images: ['https://image.thum.io/get/width/800/crop/800/https://goldenorchardstays.com/'],
   },
   {
     tag: 'HACKATHON · 2ND PLACE',

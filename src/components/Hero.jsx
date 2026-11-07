@@ -8,8 +8,8 @@ import * as THREE from 'three'
 THREE.Cache.enabled = true
 
 const socials = [
-  { label: 'GitHub', href: '#', icon: 'github' },
-  { label: 'LinkedIn', href: '#', icon: 'linkedin' },
+  { label: 'GitHub', href: 'https://github.com/vedant-kayandekar', icon: 'github' },
+  { label: 'LinkedIn', href: 'https://www.linkedin.com/in/vedant-kayandekar/', icon: 'linkedin' },
   { label: 'YouTube', href: '#', icon: 'youtube' },
   { label: 'Instagram', href: '#', icon: 'instagram' },
   { label: 'Email', href: 'mailto:vedantassociates2004@gmail.com', icon: 'mail' },

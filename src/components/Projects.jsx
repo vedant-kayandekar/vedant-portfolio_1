@@ -2,13 +2,22 @@ import { useState, useEffect } from 'react'
 
 const projects = [
   {
+    tag: 'FREELANCE WORK',
+    title: 'Golden Orchard Stays',
+    desc: 'Freelance build for a luxury villa & stay — full end-to-end WordPress and WooCommerce stack for managing room bookings and reservations.',
+    stack: ['WordPress', 'WooCommerce'],
+    link: 'https://goldenorchardstays.com/',
+    images: ['/projects/goldenorchads.png'],
+    big: true,
+  },
+  {
     tag: 'HACKATHON · 2ND PLACE',
     title: 'AI 3D Yoga Companion — RAG-Powered Responses',
     desc: 'Real-time pose detection & correction with a 3D companion rigged in Blender, RAG implemented via pgvector, and a streaming TTS pipeline for low-latency speech.',
     stack: ['Node.js', 'React', 'pgvector', 'Python CV'],
     github: '#',
     link: 'http://yogakickfit.playongear.com',
-    images: ['https://image.thum.io/get/width/800/crop/800/http://yogakickfit.playongear.com'],
+    images: ['/projects/yogakickfit.playongear.com.jpeg'],
     big: true,
   },
   {
@@ -17,17 +26,7 @@ const projects = [
     desc: 'Self-developed platforms and digital ventures built from the ground up to solve real-world problems. Includes playongear.com & anycoaches.playongear.com.',
     stack: ['React', 'Full-Stack'],
     link: 'https://anycoaches.playongear.com',
-    images: [
-      'https://image.thum.io/get/width/800/crop/800/https://anycoaches.playongear.com'
-    ],
-  },
-  {
-    tag: 'FREELANCE WORK',
-    title: 'Golden Orchard Stays',
-    desc: 'Freelance build for a luxury villa & stay — full end-to-end WordPress and WooCommerce stack for managing room bookings and reservations.',
-    stack: ['WordPress', 'WooCommerce'],
-    link: 'https://goldenorchardstays.com/',
-    images: ['https://image.thum.io/get/width/800/crop/800/https://goldenorchardstays.com/'],
+    images: ['/projects/anycoaches.png'],
   },
   {
     tag: 'HACKATHON · 2ND PLACE',
@@ -71,7 +70,7 @@ function ProjectThumbnail({ images, link }) {
       key={i}
       src={img}
       alt="Project Screenshot"
-      className={`absolute inset-0 h-full w-full object-cover transition-opacity duration-1000 ${
+      className={`absolute inset-0 h-full w-full object-cover object-top transition-opacity duration-1000 ${
         i === idx ? 'opacity-100' : 'opacity-0'
       }`}
     />
